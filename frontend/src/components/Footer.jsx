@@ -374,7 +374,7 @@ const Footer = () => {
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
             <div className="flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 lg:space-x-6">
               <p className="text-muted-foreground text-sm flex items-center">
-                © {currentYear} Meteoric Madness. Crafted with 
+                © {currentYear} Meteor Madness. Crafted with 
                 <Heart className="w-4 h-4 mx-2 text-red-500 animate-pulse" />
                 for scientific education.
               </p>        
