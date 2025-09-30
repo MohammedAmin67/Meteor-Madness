@@ -1,11 +1,8 @@
 # 🌌 Meteor Madness
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-18.x-61dafb?logo=react)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646cff?logo=vite)](https://vitejs.dev/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/meteor-madness)](https://github.com/yourusername/meteor-madness/issues)
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/meteor-madness)](https://github.com/yourusername/meteor-madness/stargazers)
 
 > **An interactive asteroid impact simulator and planetary defense game**  
 > Experience scientifically accurate orbital mechanics, visualize devastating impacts, and explore strategies to defend Earth from cosmic threats.
@@ -49,34 +46,6 @@
 - 📱 Fully responsive design for mobile and desktop
 - ♿ Accessible components using Radix UI primitives
 - 🔬 Scientific accuracy based on NASA data and physics principles
-
----
-
-## 🎥 Demo
-
-### Live Application
-**[Try Meteor Madness →](https://meteor-madness.demo)**
-
-### Screenshots
-
-<table>
-  <tr>
-    <td><img src="docs/images/simulation.png" alt="Orbital Simulation" /></td>
-    <td><img src="docs/images/impact.png" alt="Impact Analysis" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Orbital Simulation</b></td>
-    <td align="center"><b>Impact Analysis</b></td>
-  </tr>
-  <tr>
-    <td><img src="docs/images/defense.png" alt="Defense Game" /></td>
-    <td><img src="docs/images/visualization.png" alt="Data Viz" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Defense Mission</b></td>
-    <td align="center"><b>Data Visualization</b></td>
-  </tr>
-</table>
 
 ---
 
@@ -358,55 +327,6 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ---
 
-## 🗺️ Roadmap
-
-### Version 1.0 (Current)
-- [x] Basic orbital simulation
-- [x] Impact calculations
-- [x] 3D visualization
-- [x] Defense game mode
-- [x] Responsive design
-
-### Version 1.1 (In Progress)
-- [ ] Real-time NASA NEO data integration
-- [ ] Historical impact event database
-- [ ] Multiplayer defense missions
-- [ ] Advanced physics models
-- [ ] Mobile app (React Native)
-
-### Version 2.0 (Planned)
-- [ ] VR/AR support
-- [ ] Machine learning threat prediction
-- [ ] Community scenario sharing
-- [ ] Educational curriculum integration
-- [ ] API for developers
-
-### Long-term Vision
-- [ ] Integration with telescope networks
-- [ ] Citizen science contributions
-- [ ] Academic research partnerships
-- [ ] International space agency collaboration
-
-See the [open issues](https://github.com/yourusername/meteor-madness/issues) for a full list of proposed features and known issues.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2025 Meteor Madness Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction...
-```
-
----
-
 ## 🙏 Acknowledgments
 
 ### Data Sources
@@ -424,30 +344,6 @@ in the Software without restriction...
 - [D3.js](https://d3js.org/) - Data visualization
 - [shadcn/ui](https://ui.shadcn.com/) - Component library
 - [Tailwind CSS](https://tailwindcss.com/) - Styling framework
-
-### Community
-Special thanks to all [contributors](https://github.com/yourusername/meteor-madness/graphs/contributors) who have helped improve this project!
-
----
-
-## 📞 Support & Contact
-
-- **Documentation**: [docs.meteormadness.com](https://docs.meteormadness.com)
-- **Bug Reports**: [GitHub Issues](https://github.com/yourusername/meteor-madness/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/yourusername/meteor-madness/discussions)
-- **Email**: hello@meteormadness.com
-- **Discord**: [Join our community](https://discord.gg/meteor-madness)
-- **Twitter**: [@MeteorMadnessApp](https://twitter.com/MeteorMadnessApp)
-
----
-
-## 📊 Project Stats
-
-![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/meteor-madness)
-![GitHub language count](https://img.shields.io/github/languages/count/yourusername/meteor-madness)
-![GitHub top language](https://img.shields.io/github/languages/top/yourusername/meteor-madness)
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/meteor-madness)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/yourusername/meteor-madness)
 
 ---
 
