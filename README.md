@@ -1,4 +1,4 @@
-# 🌌 Meteor Madness
+# 🌌 Impact Lab
 
 [![React](https://img.shields.io/badge/React-18.x-61dafb?logo=react)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646cff?logo=vite)](https://vitejs.dev/)
