@@ -474,7 +474,7 @@ const AboutPage = () => {
                 Launch Platform
               </Button>
             </Link>
-            <Link to="https://github.com/MohammedAmin67/Meteoric-Madness" target="_blank" rel="noopener noreferrer">
+            <Link to="https://github.com/MohammedAmin67/Meteor-Madness" target="_blank" rel="noopener noreferrer">
               <Button 
                 variant="outline" 
                 className="interactive-button w-full sm:w-auto border-2 border-quantum-blue/60 text-quantum-blue hover:text-white hover:bg-quantum-blue hover:border-quantum-blue h-12 px-8 text-base font-semibold group"

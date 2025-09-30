@@ -384,7 +384,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3">
               <span className="text-xs text-muted-foreground mr-2">Connect:</span>
               <a 
-                href="https://github.com/MohammedAmin67/Meteoric-Madness" 
+                href="https://github.com/MohammedAmin67/Meteor-Madness" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-button text-muted-foreground hover:text-quantum-blue transition-all duration-300 p-3 hover:bg-quantum-blue/10 rounded-xl border border-border/30 hover:border-quantum-blue/30"
