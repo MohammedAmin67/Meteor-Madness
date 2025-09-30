@@ -12,16 +12,10 @@
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [Demo](#-demo)
 - [Installation](#-installation)
 - [Usage](#-usage)
 - [Project Structure](#-project-structure)
-- [Technologies](#-technologies)
 - [Scripts](#-scripts)
-- [Configuration](#-configuration)
-- [Contributing](#-contributing)
-- [Roadmap](#-roadmap)
-- [License](#-license)
 - [Acknowledgments](#-acknowledgments)
 
 ---
@@ -288,8 +282,6 @@ export default defineConfig({
 ---
 
 <div align="center">
-
-**[⬆ Back to Top](#-meteor-madness)**
 
 Made with ❤️ and ☕ by space enthusiasts
 
