@@ -1,5 +1,5 @@
 # Node modules (dependencies folder)
-node_modules/
+node_modules
 
 # Local environment variables
 .env
