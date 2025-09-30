@@ -7,10 +7,6 @@
 > **An interactive asteroid impact simulator and planetary defense game**  
 > Experience scientifically accurate orbital mechanics, visualize devastating impacts, and explore strategies to defend Earth from cosmic threats.
 
-[Live Demo](https://meteor-madness.demo) • [Report Bug](https://github.com/yourusername/meteor-madness/issues) • [Request Feature](https://github.com/yourusername/meteor-madness/issues)
-
-![Meteor Madness Screenshot](docs/images/screenshot.png)
-
 ---
 
 ## 📋 Table of Contents
