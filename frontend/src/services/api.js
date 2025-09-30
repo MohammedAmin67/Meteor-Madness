@@ -127,7 +127,6 @@ export const getMitigationStrategies = async () => {
   }
 };
 
-// (Optional example - commented out)
 // export async function getImpactLocations() {
 //   try {
 //     const { data } = await api.get("/locations");
