@@ -1,7 +1,8 @@
 import axios from "axios";
 export { presets } from "./mockApi";
 
-const BASE_URL = "/api";
+// Use VITE_API_BASE from environment, fallback to /api for local dev
+const BASE_URL = import.meta.env.VITE_API_BASE || "/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -10,7 +11,7 @@ const api = axios.create({
   }
 });
 
-// Asteroid Impact Simulation (POST /api/simulate)
+// Asteroid Impact Simulation (POST /simulate)
 export async function simulateAsteroid(params) {
   try {
     const { data } = await api.post("/simulate", params);
@@ -22,7 +23,7 @@ export async function simulateAsteroid(params) {
   }
 }
 
-// Mitigation strategy testing (POST /api/mitigation)
+// Mitigation strategy testing (POST /mitigation)
 export async function testMitigation(method, asteroidParams) {
   try {
     const { data } = await api.post("/mitigation", { method, ...asteroidParams });
@@ -34,7 +35,7 @@ export async function testMitigation(method, asteroidParams) {
   }
 }
 
-// Get game scenarios (GET /api/scenarios)
+// Get game scenarios (GET /scenarios)
 export async function getGameScenarios() {
   try {
     const { data } = await api.get("/scenarios");
@@ -93,7 +94,7 @@ export async function browseNeos(page = 1) {
   }
 }
 
-// Get a random scenario (GET /api/random-scenario)
+// Get a random scenario (GET /random-scenario)
 export async function getRandomScenario() {
   try {
     const { data } = await api.get("/random-scenario");
@@ -104,7 +105,7 @@ export async function getRandomScenario() {
   }
 }
 
-// Get educational content (GET /api/educational-content)
+// Get educational content (GET /educational-content)
 export const getEducationalContent = async () => {
   try {
     const { data } = await api.get("/educational-content");
@@ -115,7 +116,7 @@ export const getEducationalContent = async () => {
   }
 };
 
-// Get mitigation strategies (GET /api/mitigation-strategies)
+// Get mitigation strategies (GET /mitigation-strategies)
 export const getMitigationStrategies = async () => {
   try {
     const { data } = await api.get("/mitigation-strategies");
@@ -126,7 +127,7 @@ export const getMitigationStrategies = async () => {
   }
 };
 
-// Get impact locations (GET /api/locations)
+// (Optional example - commented out)
 // export async function getImpactLocations() {
 //   try {
 //     const { data } = await api.get("/locations");
