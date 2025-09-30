@@ -58,11 +58,4 @@
 - **Node.js** (v18 or higher)  
 - **npm** 
 
-### Installation & Running
 
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
