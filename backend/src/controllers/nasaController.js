@@ -72,12 +72,12 @@ export const getScenarios = (req, res) => {
       {
         id: "scenario_2",
         name: "City Killer",
-        description: "A massive 1.5km metallic asteroid threatens a major population center.",
+        description: "A massive 800m metallic asteroid threatens a major population center.",
         difficulty: "Hard",
         asteroid: {
           id: "2022-AP7",
           name: "City Killer",
-          size: 1500,
+          size: 800,
           velocity: 15.3,
           density: 3.2,
           composition: "metal",
@@ -95,7 +95,7 @@ export const getScenarios = (req, res) => {
         asteroid: {
           id: "2021-PDC",
           name: "Iceball",
-          size: 800,
+          size: 150,
           velocity: 12.1,
           density: 1.8,
           composition: "ice",
@@ -113,7 +113,7 @@ export const getScenarios = (req, res) => {
   }
 };
 
-// --- Random Scenario with NASA Data ---
+// --- Random Scenario with NASA Data (SCALED DOWN) ---
 
 export const getRandomScenario = async (req, res) => {
   try {
@@ -126,23 +126,50 @@ export const getRandomScenario = async (req, res) => {
 
     for (let i = 0; i < 3; i++) {
       const neo = await fetchRandomNeo();
-      const diameter =
+      
+      // Get raw diameter from NASA data
+      const rawDiameter =
         neo.estimated_diameter?.meters?.estimated_diameter_max ||
         neo.estimated_diameter?.meters?.estimated_diameter_min ||
-        100;
+        300;
+      
+      // Scale down large asteroids to playable sizes (50-900m range)
+      let diameter;
+      if (rawDiameter > 1000) {
+        // Very large asteroids: scale to 400-900m
+        diameter = 400 + Math.floor(Math.random() * 500);
+      } else if (rawDiameter > 500) {
+        // Large asteroids: scale to 200-600m
+        diameter = 200 + Math.floor(Math.random() * 400);
+      } else if (rawDiameter > 200) {
+        // Medium asteroids: scale to 100-400m
+        diameter = 100 + Math.floor(Math.random() * 300);
+      } else {
+        // Small asteroids: keep original or set minimum 50m
+        diameter = Math.max(50, Math.round(rawDiameter));
+      }
+
       const rawVelocity = neo.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second;
       const velocity = rawVelocity
         ? parseFloat(parseFloat(rawVelocity).toFixed(2))
         : 15.00;
 
-      let level = "Medium";
-      if (diameter < 2000) level = "Easy";
-      else if (diameter < 5000) level = "Medium";
-      else level = "Hard";
+      // Determine difficulty and risk based on SCALED diameter
+      let level = "Easy";
+      let riskLevel = "low";
+      
+      if (diameter < 150) {
+        level = "Easy";
+        riskLevel = "low";
+      } else if (diameter < 400) {
+        level = "Medium";
+        riskLevel = "medium";
+      } else {
+        level = "Hard";
+        riskLevel = "high";
+      }
 
       const difficulty = level;
-      const riskLevel = level;
-
       const missionAdj = missionAdjectives[Math.floor(Math.random() * missionAdjectives.length)];
       const asteroidName = neo.name || "Unknown Object";
       const scenarioName = `${missionAdj}: ${asteroidName}`;
@@ -150,12 +177,12 @@ export const getRandomScenario = async (req, res) => {
       randomScenarios.push({
         id: `nasa_${neo.id}_${i}`,
         name: scenarioName,
-        description: `A real near-Earth object (${asteroidName}) with a diameter of ${Math.round(diameter)}m and velocity ${velocity} km/s is approaching Earth!`,
+        description: `A near-Earth object (${asteroidName}) with an estimated diameter of ${diameter}m and velocity ${velocity} km/s is approaching Earth!`,
         difficulty,
         asteroid: {
           id: neo.id,
           name: asteroidName,
-          size: Math.round(diameter),
+          size: diameter,
           velocity,
           density: 2.5,
           composition: "rock",
@@ -165,7 +192,7 @@ export const getRandomScenario = async (req, res) => {
         timeLimit: 2,
         objectives: [
           "Analyze real NEO data",
-          "Deflect the real asteroid",
+          "Deflect the asteroid",
           "Minimize casualties"
         ]
       });
@@ -180,94 +207,120 @@ export const getRandomScenario = async (req, res) => {
   }
 };
 
-// --- Mitigation Test ---
+// --- Mitigation Test (UPDATED THRESHOLDS) ---
 
 export const testMitigation = (req, res) => {
   try {
     const { method, size, velocity } = req.body;
+    const asteroidSize = Number(size);
+    const asteroidVelocity = Number(velocity);
     let result;
 
     switch (method) {
       case "kinetic_impactor":
         result = {
-          success: size < 500,
+          success: asteroidSize < 600,
           method: "Kinetic Impactor",
-          energyRequired: Math.pow(size, 2) * velocity * 1e6,
-          timeRequired: Math.max(1, size / 50),
-          successProbability: Math.max(0.1, 0.9 - (size / 1000)),
-          costEstimate: size * velocity * 1e6
+          energyRequired: Math.pow(asteroidSize, 2) * asteroidVelocity * 1e6,
+          timeRequired: Math.max(1, asteroidSize / 50),
+          successProbability: asteroidSize < 600 
+            ? Math.max(0.70, 0.95 - (asteroidSize / 1200)) 
+            : Math.max(0.1, 0.4 - (asteroidSize / 1000)),
+          costEstimate: asteroidSize * asteroidVelocity * 1e6
         };
         break;
+        
       case "gravity_tractor":
         result = {
-          success: size < 300,
+          success: asteroidSize < 1200,
           method: "Gravity Tractor",
-          energyRequired: Math.pow(size, 1.5) * velocity * 1e7,
-          timeRequired: Math.max(5, size / 20),
-          successProbability: Math.max(0.05, 0.7 - (size / 500)),
-          costEstimate: size * velocity * 2e6
+          energyRequired: Math.pow(asteroidSize, 1.5) * asteroidVelocity * 1e7,
+          timeRequired: Math.max(5, asteroidSize / 20),
+          successProbability: asteroidSize < 1200 
+            ? Math.max(0.60, 0.90 - (asteroidSize / 1500)) 
+            : Math.max(0.05, 0.5 - (asteroidSize / 500)),
+          costEstimate: asteroidSize * asteroidVelocity * 2e6
         };
         break;
+        
       case "nuclear_deflection":
         result = {
-          success: size < 1000,
+          success: asteroidSize < 2500,
           method: "Nuclear Deflection",
-          energyRequired: Math.pow(size, 1.8) * velocity * 1e8,
-          timeRequired: Math.max(0.5, size / 100),
-          successProbability: Math.max(0.3, 0.95 - (size / 2000)),
-          costEstimate: size * velocity * 5e6
+          energyRequired: Math.pow(asteroidSize, 1.8) * asteroidVelocity * 1e8,
+          timeRequired: Math.max(0.5, asteroidSize / 100),
+          successProbability: asteroidSize < 2500 
+            ? Math.max(0.80, 0.98 - (asteroidSize / 4000)) 
+            : Math.max(0.3, 0.7 - (asteroidSize / 2000)),
+          costEstimate: asteroidSize * asteroidVelocity * 5e6
         };
         break;
+        
       case "nuclear_device":
         result = {
-          success: size < 1200,
+          success: asteroidSize < 2500,
           method: "Nuclear Device",
-          energyRequired: Math.pow(size, 1.8) * velocity * 1.5e8,
-          timeRequired: Math.max(0.3, size / 120),
-          successProbability: Math.max(0.25, 0.93 - (size / 1500)),
-          costEstimate: size * velocity * 7e6
+          energyRequired: Math.pow(asteroidSize, 1.8) * asteroidVelocity * 1.5e8,
+          timeRequired: Math.max(0.3, asteroidSize / 120),
+          successProbability: asteroidSize < 2500 
+            ? Math.max(0.78, 0.96 - (asteroidSize / 3500)) 
+            : Math.max(0.25, 0.68 - (asteroidSize / 1500)),
+          costEstimate: asteroidSize * asteroidVelocity * 7e6
         };
         break;
-      case "ion_beam_shepherd":
-        result = {
-          success: size < 400,
-          method: "Ion Beam Shepherd",
-          energyRequired: Math.pow(size, 1.3) * velocity * 8e6,
-          timeRequired: Math.max(12, size / 8),
-          successProbability: Math.max(0.02, 0.65 - (size / 800)),
-          costEstimate: size * velocity * 2e6
-        };
-        break;
-      case "solar_concentrator":
-        result = {
-          success: size < 300,
-          method: "Solar Concentrator",
-          energyRequired: Math.pow(size, 1.6) * velocity * 5e7,
-          timeRequired: Math.max(5, size / 15),
-          successProbability: Math.max(0.04, 0.6 - (size / 700)),
-          costEstimate: size * velocity * 1.2e6
-        };
-        break;
+        
       case "laser_ablation":
         result = {
-          success: size < 200,
+          success: asteroidSize < 300,
           method: "Laser Ablation",
-          energyRequired: Math.pow(size, 1.4) * velocity * 2e7,
-          timeRequired: Math.max(7, size / 10),
-          successProbability: Math.max(0.01, 0.5 - (size / 500)),
-          costEstimate: size * velocity * 2.5e6
+          energyRequired: Math.pow(asteroidSize, 1.4) * asteroidVelocity * 2e7,
+          timeRequired: Math.max(7, asteroidSize / 10),
+          successProbability: asteroidSize < 300 
+            ? Math.max(0.65, 0.92 - (asteroidSize / 400)) 
+            : Math.max(0.01, 0.35 - (asteroidSize / 500)),
+          costEstimate: asteroidSize * asteroidVelocity * 2.5e6
         };
         break;
+        
       case "mass_driver":
         result = {
-          success: size < 700,
+          success: asteroidSize >= 100 && asteroidSize <= 900,
           method: "Mass Driver",
-          energyRequired: Math.pow(size, 1.2) * velocity * 1e7,
-          timeRequired: Math.max(15, size / 6),
-          successProbability: Math.max(0.02, 0.42 - (size / 1000)),
-          costEstimate: size * velocity * 0.9e6
+          energyRequired: Math.pow(asteroidSize, 1.2) * asteroidVelocity * 1e7,
+          timeRequired: Math.max(15, asteroidSize / 6),
+          successProbability: (asteroidSize >= 100 && asteroidSize <= 900) 
+            ? Math.max(0.55, 0.85 - Math.abs(asteroidSize - 500) / 800) 
+            : Math.max(0.02, 0.25 - Math.abs(asteroidSize - 500) / 1000),
+          costEstimate: asteroidSize * asteroidVelocity * 0.9e6
         };
         break;
+        
+      case "solar_concentrator":
+        result = {
+          success: asteroidSize < 700,
+          method: "Solar Concentrator",
+          energyRequired: Math.pow(asteroidSize, 1.6) * asteroidVelocity * 5e7,
+          timeRequired: Math.max(5, asteroidSize / 15),
+          successProbability: asteroidSize < 700 
+            ? Math.max(0.60, 0.88 - (asteroidSize / 900)) 
+            : Math.max(0.04, 0.4 - (asteroidSize / 700)),
+          costEstimate: asteroidSize * asteroidVelocity * 1.2e6
+        };
+        break;
+        
+      case "ion_beam_shepherd":
+        result = {
+          success: asteroidSize < 550,
+          method: "Ion Beam Shepherd",
+          energyRequired: Math.pow(asteroidSize, 1.3) * asteroidVelocity * 8e6,
+          timeRequired: Math.max(12, asteroidSize / 8),
+          successProbability: asteroidSize < 550 
+            ? Math.max(0.63, 0.90 - (asteroidSize / 700)) 
+            : Math.max(0.02, 0.45 - (asteroidSize / 800)),
+          costEstimate: asteroidSize * asteroidVelocity * 2e6
+        };
+        break;
+        
       default:
         return res.status(400).json({ error: "Unknown mitigation method" });
     }

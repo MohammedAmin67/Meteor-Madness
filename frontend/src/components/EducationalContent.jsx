@@ -23,6 +23,7 @@ import {
   Thermometer,
   Wind,
   Cloud,
+  Sparkles,
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -196,7 +197,7 @@ The composition directly affects impact dynamics. Metallic asteroids are denser 
       topics: [
         {
           id: "energy",
-          title: "Kinetic Energy & Impact Dynamics",
+          title: "Kinetic Energy & Impact",
           level: "Advanced",
           estimatedTime: "10 min read",
           content: `The devastating effects of asteroid impacts come from the enormous kinetic energy released during collision with Earth.
@@ -508,7 +509,7 @@ Where:
   // --- END STATIC SECTIONS ---
 
   // Animation & GSAP useEffects (unchanged)
-   useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
       if (headerRef.current) {
@@ -598,9 +599,9 @@ Where:
 
   const getLevelColor = (level) => {
     switch (level) {
-      case 'Beginner': return 'bg-mission-green';
-      case 'Intermediate': return 'bg-plasma-orange';
-      case 'Advanced': return 'bg-destructive';
+      case 'Beginner': return 'bg-mission-green/90 hover:bg-mission-green';
+      case 'Intermediate': return 'bg-plasma-orange/90 hover:bg-plasma-orange';
+      case 'Advanced': return 'bg-destructive/90 hover:bg-destructive';
       default: return 'bg-muted';
     }
   };
@@ -626,9 +627,12 @@ Where:
 
   if (loadingContent) {
     return (
-      <div className="flex justify-center items-center h-40">
-        <span className="inline-block w-8 h-8 border-4 border-current border-t-transparent rounded-full animate-spin" />
-        <span className="ml-3 text-lg text-muted-foreground">Loading Educational Content...</span>
+      <div className="flex flex-col justify-center items-center min-h-[400px] space-y-4">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-stellar-cyan/30 border-t-stellar-cyan rounded-full animate-spin" />
+          <Sparkles className="w-6 h-6 text-stellar-cyan absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        </div>
+        <span className="text-lg font-medium text-foreground animate-pulse">Loading Educational Content...</span>
       </div>
     );
   }
@@ -639,150 +643,214 @@ Where:
       ref={sectionRef}
       className={`px-4 sm:px-6 lg:px-8 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto">    
         <div ref={tabsRef}>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
-            <TabsList className="tabs-list grid w-full grid-cols-2 lg:grid-cols-4 bg-card/60 border-border/50 backdrop-blur-sm h-auto p-1">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white text-xs sm:text-sm p-2 sm:p-3 h-10 sm:h-12">
-                <GraduationCap className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Overview</span>
-                <span className="sm:hidden">Start</span>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+            {/* Enhanced Tab Navigation */}
+            <TabsList className="tabs-list grid w-full grid-cols-2 lg:grid-cols-4 bg-card/80 border border-border/50 backdrop-blur-xl rounded-xl h-auto p-2 gap-2 shadow-command">
+              <TabsTrigger 
+                value="overview" 
+                className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white data-[state=active]:shadow-glow text-sm font-medium p-3 h-14 rounded-lg transition-all duration-300"
+              >
+                <GraduationCap className="w-5 h-5 mr-2" />
+                <span>Overview</span>
               </TabsTrigger>
-              <TabsTrigger value="science" className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white text-xs sm:text-sm p-2 sm:p-3 h-10 sm:h-12">
-                <Telescope className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Science</span>
-                <span className="sm:hidden">Sci</span>
+              <TabsTrigger 
+                value="science" 
+                className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white data-[state=active]:shadow-glow text-sm font-medium p-3 h-14 rounded-lg transition-all duration-300"
+              >
+                <Telescope className="w-5 h-5 mr-2" />
+                <span>Science</span>
               </TabsTrigger>
-              <TabsTrigger value="physics" className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white text-xs sm:text-sm p-2 sm:p-3 h-10 sm:h-12">
-                <Atom className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Physics</span>
-                <span className="sm:hidden">Phy</span>
+              <TabsTrigger 
+                value="physics" 
+                className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white data-[state=active]:shadow-glow text-sm font-medium p-3 h-14 rounded-lg transition-all duration-300"
+              >
+                <Atom className="w-5 h-5 mr-2" />
+                <span>Physics</span>
               </TabsTrigger>
-              <TabsTrigger value="defense" className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white text-xs sm:text-sm p-2 sm:p-3 h-10 sm:h-12">
-                <Shield className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Defense</span>
-                <span className="sm:hidden">Def</span>
+              <TabsTrigger 
+                value="defense" 
+                className="data-[state=active]:bg-gradient-quantum data-[state=active]:text-white data-[state=active]:shadow-glow text-sm font-medium p-3 h-14 rounded-lg transition-all duration-300"
+              >
+                <Shield className="w-5 h-5 mr-2" />
+                <span>Defense</span>
               </TabsTrigger>
             </TabsList>
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-8 sm:space-y-10">
+
+            {/* Overview Tab - Enhanced Grid Layout */}
+            <TabsContent value="overview" className="space-y-10">
+              {/* Dynamic Content Cards */}
               <div
                 ref={overviewGridRef}
-                className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 justify-items-center"
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
               >
                 {educationalSections.slice(0, 3).map((section, idx) => {
                   if (section.type === "image") {
-                    // Astronomy Picture of the Day
                     return (
-                      <Card key={`apod${idx}`} className="education-card w-full max-w-sm flex flex-col bg-card/60 border border-stellar-cyan/30 shadow-command hover:shadow-glow transition-all duration-300 group">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="flex items-center space-x-2">
-                            <Telescope className="w-5 h-5 text-stellar-cyan" />
-                            <span className="font-bold text-base text-quantum-blue truncate">{section.title}</span>
+                      <Card key={`apod${idx}`} className="education-card bg-card/80 border border-stellar-cyan/30 shadow-command hover:shadow-glow transition-all duration-300 backdrop-blur-sm group overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-stellar-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <CardHeader className="pb-4 relative z-10">
+                          <CardTitle className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-stellar-cyan/10 border border-stellar-cyan/30">
+                              <Telescope className="w-5 h-5 text-stellar-cyan" />
+                            </div>
+                            <span className="font-bold text-lg text-foreground">{section.title}</span>
                           </CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-col items-center px-3 py-2 space-y-2">
-                          <img src={section.imageUrl} alt={section.titleText} className="rounded-lg w-full mb-2 object-cover max-h-40 border border-card/30" />
-                          <div className="font-semibold text-sm text-center">{section.titleText}</div>
-                          <div className="text-xs text-muted-foreground text-center whitespace-pre-line" style={{maxHeight: "8rem", overflowY: "auto"}}>{section.explanation}</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge className="bg-plasma-orange text-white">{section.date}</Badge>
-                            <BookOpen className="w-4 h-4 text-muted-foreground" />
+                        <CardContent className="space-y-4 relative z-10">
+                          <div className="relative rounded-xl overflow-hidden border-2 border-stellar-cyan/20 group-hover:border-stellar-cyan/40 transition-colors duration-300">
+                            <img 
+                              src={section.imageUrl} 
+                              alt={section.titleText} 
+                              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
                           </div>
-                          <Button
-                            className="mt-2 flex gap-2 mx-auto"
-                            variant="outline"
-                            onClick={() => window.open('https://apod.nasa.gov/apod/', '_blank')}
-                          >
-                            <ExternalLink className="w-4 h-4" /> Learn More
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    );
-                  }
-                  if (section.type === "facts") {
-                    // Near-Earth Asteroid Facts (Enhanced)
-                    return (
-                      <Card key={`facts${idx}`} className="education-card w-full max-w-sm flex flex-col bg-card/60 border border-plasma-orange/30 shadow-command hover:shadow-glow transition-all duration-300 group">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="flex items-center space-x-2">
-                            <Atom className="w-5 h-5 text-plasma-orange" />
-                            <span className="font-bold text-base text-quantum-blue truncate">{section.title}</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="px-3 py-2 space-y-2">
-                          <ul className="space-y-2">
-                            {section.facts.slice(0, 3).map((fact, i) => (
-                              <li key={i} className={`flex flex-col gap-1 p-2 rounded-lg ${fact.hazardous ? 'bg-destructive/10 border border-destructive/40' : 'bg-muted/20 border border-border/30'}`}>
-                                <div className="flex items-center gap-2">
-                                  <BookOpen className="w-3 h-3 text-muted-foreground" />
-                                  <span className="font-medium text-xs truncate">{fact.name}</span>
-                                  <Badge className={fact.hazardous ? "bg-destructive text-white text-xs" : "bg-mission-green text-white text-xs"}>
-                                    {fact.approachDate}
-                                  </Badge>
-                                </div>
-                                <div className="flex flex-wrap gap-2 text-xs items-center">
-                                  <span><Thermometer className="inline mr-1" />{fact.diameter}m</span>
-                                  <span><Wind className="inline mr-1" />{fact.velocity}km/s</span>
-                                  {fact.absMagnitude && (
-                                    <span>H: <span className="font-bold">{fact.absMagnitude}</span></span>
-                                  )}
-                                  {fact.hazardous && (
-                                    <Badge className="bg-destructive text-white text-xs">Hazardous</Badge>
-                                  )}
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                          <Separator className="my-1" />
-                          <div className="flex justify-center">
-                            <Button size="sm" variant="outline" className="gap-1"
-                              onClick={() => window.open("https://cneos.jpl.nasa.gov/ca/", "_blank")}
+                          <h3 className="font-bold text-base text-foreground line-clamp-2">{section.titleText}</h3>
+                          <p className="text-sm text-muted-foreground line-clamp-4 leading-relaxed">
+                            {section.explanation}
+                          </p>
+                          <div className="flex items-center justify-between pt-2">
+                            <Badge className="bg-plasma-orange/90 text-white border-0 shadow-sm">
+                              {section.date}
+                            </Badge>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-stellar-cyan hover:text-stellar-cyan hover:bg-stellar-cyan/10"
+                              onClick={() => window.open('https://apod.nasa.gov/apod/', '_blank')}
                             >
-                              <PlayCircle className="w-4 h-4" /> Try Simulation
+                              <ExternalLink className="w-4 h-4 mr-2" /> 
+                              View Full
                             </Button>
                           </div>
                         </CardContent>
                       </Card>
                     );
                   }
-                  if (section.type === "weather") {
-                    // Mars Weather (visually enhanced)
+                  
+                  if (section.type === "facts") {
                     return (
-                      <Card key={`mars${idx}`} className="education-card w-full max-w-sm flex flex-col bg-gradient-to-br from-mission-green/10 to-stellar-cyan/10 border border-mission-green/40 shadow-command transition-all duration-300 group">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="flex items-center space-x-2">
-                            <Cloud className="w-5 h-5 text-mission-green" />
-                            <span className="font-bold text-base text-quantum-blue truncate">{section.title}</span>
+                      <Card key={`facts${idx}`} className="education-card bg-card/80 border border-plasma-orange/30 shadow-command hover:shadow-glow transition-all duration-300 backdrop-blur-sm group overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-plasma-orange/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <CardHeader className="pb-4 relative z-10">
+                          <CardTitle className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-plasma-orange/10 border border-plasma-orange/30">
+                              <Atom className="w-5 h-5 text-plasma-orange" />
+                            </div>
+                            <span className="font-bold text-lg text-foreground">{section.title}</span>
                           </CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-col px-3 py-2 space-y-2 items-center">
-                          <div className="text-3xl mb-1">🪐</div>
-                          <div className="font-semibold text-sm text-center">
-                            Sol {section.sol} <span className="text-xs text-muted-foreground">({section.season && section.season.charAt(0).toUpperCase() + section.season.slice(1)})</span>
+                        <CardContent className="space-y-3 relative z-10">
+                          {section.facts.slice(0, 3).map((fact, i) => (
+                            <div 
+                              key={i} 
+                              className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                                fact.hazardous 
+                                  ? 'bg-destructive/10 border-destructive/30 hover:border-destructive/50 hover:bg-destructive/15' 
+                                  : 'bg-muted/30 border-border/30 hover:border-border/50 hover:bg-muted/40'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-semibold text-sm text-foreground truncate flex-1">
+                                  {fact.name}
+                                </span>
+                                {fact.hazardous && (
+                                  <Badge className="bg-destructive/90 text-white border-0 shadow-sm ml-2">
+                                    Hazardous
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Thermometer className="w-3 h-3" />
+                                  <strong>{fact.diameter}m</strong>
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Wind className="w-3 h-3" />
+                                  <strong>{fact.velocity}km/s</strong>
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Badge variant="outline" className="text-xs border-border/30">
+                                    {fact.approachDate}
+                                  </Badge>
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                          <Separator className="my-4" />
+                          <Button 
+                            className="w-full bg-gradient-quantum hover:shadow-glow transition-all duration-300"
+                            onClick={() => window.open("https://cneos.jpl.nasa.gov/ca/", "_blank")}
+                          >
+                            <PlayCircle className="w-4 h-4 mr-2" /> 
+                            Try Simulation
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  }
+                  
+                  if (section.type === "weather") {
+                    return (
+                      <Card key={`mars${idx}`} className="education-card bg-gradient-to-br from-card/80 to-mission-green/5 border border-mission-green/30 shadow-command hover:shadow-glow transition-all duration-300 backdrop-blur-sm group overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-mission-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <CardHeader className="pb-4 relative z-10">
+                          <CardTitle className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-mission-green/10 border border-mission-green/30">
+                              <Cloud className="w-5 h-5 text-mission-green" />
+                            </div>
+                            <span className="font-bold text-lg text-foreground">{section.title}</span>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4 relative z-10">
+                          <div className="text-center py-4">
+                            <div className="text-6xl mb-3 animate-pulse">🪐</div>
+                            <div className="text-xl font-bold text-foreground mb-1">
+                              Sol {section.sol}
+                            </div>
+                            <div className="text-sm text-muted-foreground capitalize">
+                              {section.season && `${section.season} Season`}
+                            </div>
                           </div>
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs mt-2">
-                            <span className="font-bold flex items-center"><Thermometer className="w-3 h-3 mr-1" />Temp</span>
-                            <span>{section.temperature}</span>
-                            <span className="font-bold flex items-center"><Wind className="w-3 h-3 mr-1" />Pressure</span>
-                            <span>{section.pressure}</span>
-                            <span className="font-bold flex items-center"><Sun className="w-3 h-3 mr-1" />Sunrise</span>
-                            <span>{section.sunrise}</span>
-                            <span className="font-bold flex items-center"><Sun className="w-3 h-3 mr-1" />Sunset</span>
-                            <span>{section.sunset}</span>
+                          
+                          <div className="grid grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg border border-border/30">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                <Thermometer className="w-4 h-4" />
+                                <span>Temperature</span>
+                              </div>
+                              <div className="font-semibold text-sm text-foreground">{section.temperature}</div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                <Wind className="w-4 h-4" />
+                                <span>Pressure</span>
+                              </div>
+                              <div className="font-semibold text-sm text-foreground">{section.pressure}</div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                <Sun className="w-4 h-4" />
+                                <span>Sunrise</span>
+                              </div>
+                              <div className="font-semibold text-sm text-foreground">{section.sunrise}</div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-muted-foreground text-xs">
+                                <Sun className="w-4 h-4" />
+                                <span>Sunset</span>
+                              </div>
+                              <div className="font-semibold text-sm text-foreground">{section.sunset}</div>
+                            </div>
                           </div>
-                          <Separator className="my-2" />
-                          <div className="text-xs text-muted-foreground text-center">
-                            {section.season && section.temperature
-                              ? `Currently ${section.season} on Mars, with temperatures ranging ${section.temperature}.`
-                              : "Current Mars weather from NASA's InSight mission."}
-                          </div>
+
                           <Button
-                            className="mt-2 flex gap-2 mx-auto"
-                            variant="outline"
+                            className="w-full bg-gradient-quantum hover:shadow-glow transition-all duration-300"
                             onClick={() => window.open('https://mars.nasa.gov/insight/weather/', '_blank')}
                           >
-                            <ExternalLink className="w-4 h-4" /> NASA Mars Weather
+                            <ExternalLink className="w-4 h-4 mr-2" /> 
+                            NASA Mars Weather
                           </Button>
                         </CardContent>
                       </Card>
@@ -790,83 +858,105 @@ Where:
                   }
                   return null;
                 })}
-                {/* ---- STATIC CARDS BOTTOM (SHOW ALL SUBTOPICS, original style) ---- */}
-                {Object.entries(staticSections).slice(0, 3).map(([key, section]) => {
+
+                {/* Static Category Cards */}
+                {Object.entries(staticSections).map(([key, section]) => {
                   const Icon = section.icon;
                   return (
-                    <Card key={key} className="education-card w-full max-w-sm flex flex-col bg-card/60 border border-stellar-cyan/20 shadow-command hover:shadow-glow transition-all duration-300 group">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="flex items-center space-x-2">
-                          <div className={`education-icon p-2 rounded-lg bg-gradient-to-br ${section.gradient}`}>
-                            <Icon className="w-5 h-5 text-white" />
+                    <Card 
+                      key={key} 
+                      className="education-card bg-card/80 border border-border/50 shadow-command hover:shadow-glow transition-all duration-300 backdrop-blur-sm group overflow-hidden"
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-br ${section.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+                      <CardHeader className="pb-4 relative z-10">
+                        <CardTitle className="flex items-center gap-3">
+                          <div className={`education-icon p-3 rounded-xl bg-gradient-to-br ${section.gradient} shadow-lg`}>
+                            <Icon className="w-6 h-6 text-white" />
                           </div>
-                          <span className="font-bold text-base text-quantum-blue truncate">{section.title}</span>
+                          <span className="font-bold text-lg text-foreground">{section.title}</span>
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="flex flex-col px-3 py-2 space-y-2">
-                        <div className="flex flex-col gap-2">
+                      <CardContent className="space-y-3 relative z-10">
+                        <div className="space-y-2">
                           {section.topics.map((topic) => (
-                            <div key={topic.id} className="flex items-center justify-between px-2 py-1 bg-muted/20 rounded border border-border/30 mb-1">
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="w-3 h-3 text-muted-foreground" />
-                                <span className="text-xs font-medium truncate">{topic.title}</span>
+                            <div 
+                              key={topic.id} 
+                              className="flex items-center justify-between p-3 bg-muted/20 hover:bg-muted/40 rounded-lg border border-border/30 hover:border-border/50 transition-all duration-300"
+                            >
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <BookOpen className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                <span className="text-sm font-medium text-foreground truncate">
+                                  {topic.title}
+                                </span>
                               </div>
-                              <Badge className={`${getLevelColor(topic.level)} text-white text-xs px-2 py-0.5`}>
+                              <Badge className={`${getLevelColor(topic.level)} text-white border-0 shadow-sm flex-shrink-0 ml-2`}>
                                 {getLevelIcon(topic.level)}
                               </Badge>
                             </div>
                           ))}
                         </div>
-                        <Separator className="my-1" />
+                        
+                        <Separator className="my-4" />
+                        
                         <Button
-                          className="explore-button w-full text-xs px-2 py-1 bg-gradient-quantum hover:shadow-command group-hover:scale-105"
+                          className="explore-button w-full bg-gradient-quantum hover:shadow-glow transition-all duration-300 group-hover:scale-[1.02]"
                           onClick={() => handleExploreSection(key)}
                         >
-                          Explore <ChevronRight className="w-3 h-3 ml-1" />
+                          Explore Topics
+                          <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </CardContent>
                     </Card>
                   );
                 })}
               </div>
-              {/* Educational Features */}
-              <Card className="bg-card/60 border-border/50 backdrop-blur-sm shadow-command">
-                <CardHeader className="pb-3 sm:pb-4">
-                  <CardTitle className="flex items-center space-x-3">
-                    <div className="p-2 rounded-lg bg-gradient-quantum">
-                      <Lightbulb className="w-5 h-5 text-white" />
+
+              {/* Enhanced Learning Features Section */}
+              <Card className="bg-card/80 border border-border/50 backdrop-blur-xl shadow-command">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-gradient-quantum shadow-lg">
+                      <Lightbulb className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-lg text-quantum-blue">Learning Features</span>
+                    <span className="text-2xl text-quantum-blue">Learning Features</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent ref={featuresRef}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    <div className="feature-card p-4 bg-stellar-cyan/10 rounded-lg border border-stellar-cyan/20">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Target className="w-5 h-5 text-stellar-cyan" />
-                        <h4 className="font-bold text-stellar-cyan">Interactive Content</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="feature-card p-6 bg-gradient-to-br from-stellar-cyan/10 to-transparent rounded-xl border-2 border-stellar-cyan/20 hover:border-stellar-cyan/40 transition-all duration-300 group">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-stellar-cyan/10">
+                          <Target className="w-6 h-6 text-stellar-cyan" />
+                        </div>
+                        <h4 className="font-bold text-lg text-stellar-cyan">Interactive Content</h4>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         Engage with comprehensive materials covering asteroid detection,
                         orbital mechanics, and impact physics with real-world examples.
                       </p>
                     </div>
-                    <div className="feature-card p-4 bg-plasma-orange/10 rounded-lg border border-plasma-orange/20">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Activity className="w-5 h-5 text-plasma-orange" />
-                        <h4 className="font-bold text-plasma-orange">Progressive Learning</h4>
+                    
+                    <div className="feature-card p-6 bg-gradient-to-br from-plasma-orange/10 to-transparent rounded-xl border-2 border-plasma-orange/20 hover:border-plasma-orange/40 transition-all duration-300 group">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-plasma-orange/10">
+                          <Activity className="w-6 h-6 text-plasma-orange" />
+                        </div>
+                        <h4 className="font-bold text-lg text-plasma-orange">Progressive Learning</h4>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         Topics are organized by difficulty level from beginner to advanced,
                         allowing you to build knowledge systematically.
                       </p>
                     </div>
-                    <div className="feature-card p-4 bg-mission-green/10 rounded-lg border border-mission-green/20">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Rocket className="w-5 h-5 text-mission-green" />
-                        <h4 className="font-bold text-mission-green">Practical Applications</h4>
+                    
+                    <div className="feature-card p-6 bg-gradient-to-br from-mission-green/10 to-transparent rounded-xl border-2 border-mission-green/20 hover:border-mission-green/40 transition-all duration-300 group">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-mission-green/10">
+                          <Rocket className="w-6 h-6 text-mission-green" />
+                        </div>
+                        <h4 className="font-bold text-lg text-mission-green">Practical Applications</h4>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         Learn how scientific principles apply to real planetary defense
                         missions and current space agency initiatives.
                       </p>
@@ -874,36 +964,51 @@ Where:
                   </div>
                 </CardContent>
               </Card>
-              {/* Quick Facts */}
-              <Card className="bg-card/60 border-border/50 backdrop-blur-sm shadow-command">
-                <CardHeader className="pb-3 sm:pb-4">
-                  <CardTitle className="flex items-center space-x-3">
-                    <div className="p-2 rounded-lg bg-gradient-quantum">
-                      <Info className="w-5 h-5 text-white" />
+
+              {/* Enhanced Quick Facts Section */}
+              <Card className="bg-card/80 border border-border/50 backdrop-blur-xl shadow-command">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-gradient-quantum shadow-lg">
+                      <Info className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-lg text-quantum-blue">Did You Know?</span>
+                    <span className="text-2xl text-quantum-blue">Did You Know?</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    <div className="text-center p-4 bg-stellar-cyan/10 rounded-lg border border-stellar-cyan/20">
-                      <div className="text-2xl font-bold text-stellar-cyan mb-2">31,000+</div>
-                      <div className="text-sm text-muted-foreground mb-2">Near-Earth Asteroids Discovered</div>
-                      <div className="text-xs text-muted-foreground">
-                        <span>NASA automated systems discover about 3,000 new objects annually</span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center p-6 bg-gradient-to-br from-stellar-cyan/10 to-transparent rounded-xl border-2 border-stellar-cyan/20 hover:border-stellar-cyan/40 transition-all duration-300 group">
+                      <div className="text-4xl font-bold text-stellar-cyan mb-3 group-hover:scale-110 transition-transform">
+                        31,000+
+                      </div>
+                      <div className="text-base font-semibold text-foreground mb-2">
+                        Near-Earth Asteroids Discovered
+                      </div>
+                      <div className="text-sm text-muted-foreground leading-relaxed">
+                        NASA automated systems discover about 3,000 new objects annually
                       </div>
                     </div>
-                    <div className="text-center p-4 bg-plasma-orange/10 rounded-lg border border-plasma-orange/20">
-                      <div className="text-2xl font-bold text-plasma-orange mb-2">66 MYA</div>
-                      <div className="text-sm text-muted-foreground mb-2">Chicxulub Impact Event</div>
-                      <div className="text-xs text-muted-foreground">
+                    
+                    <div className="text-center p-6 bg-gradient-to-br from-plasma-orange/10 to-transparent rounded-xl border-2 border-plasma-orange/20 hover:border-plasma-orange/40 transition-all duration-300 group">
+                      <div className="text-4xl font-bold text-plasma-orange mb-3 group-hover:scale-110 transition-transform">
+                        66 MYA
+                      </div>
+                      <div className="text-base font-semibold text-foreground mb-2">
+                        Chicxulub Impact Event
+                      </div>
+                      <div className="text-sm text-muted-foreground leading-relaxed">
                         Created 180km crater, ending the age of dinosaurs and reshaping evolution
                       </div>
                     </div>
-                    <div className="text-center p-4 bg-mission-green/10 rounded-lg border border-mission-green/20">
-                      <div className="text-2xl font-bold text-mission-green mb-2">2026</div>
-                      <div className="text-sm text-muted-foreground mb-2">Hera Mission Arrival</div>
-                      <div className="text-xs text-muted-foreground">
+                    
+                    <div className="text-center p-6 bg-gradient-to-br from-mission-green/10 to-transparent rounded-xl border-2 border-mission-green/20 hover:border-mission-green/40 transition-all duration-300 group">
+                      <div className="text-4xl font-bold text-mission-green mb-3 group-hover:scale-110 transition-transform">
+                        2026
+                      </div>
+                      <div className="text-base font-semibold text-foreground mb-2">
+                        Hera Mission Arrival
+                      </div>
+                      <div className="text-sm text-muted-foreground leading-relaxed">
                         ESA follow-up mission to study the DART impact site and validate deflection models
                       </div>
                     </div>
@@ -912,18 +1017,21 @@ Where:
               </Card>
             </TabsContent>
 
-            {/* Individual Section Tabs: Science, Physics, Defense, etc. */}
+            {/* Individual Section Tabs: Science, Physics, Defense */}
             {Object.entries(staticSections).map(([key, section]) => (
-              <TabsContent key={key} value={key} className="space-y-4 sm:space-y-6">
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 sm:gap-6">
-                  {/* Topic Navigation */}
-                  <Card ref={topicNavRef} className="xl:col-span-1 bg-card/60 border-border/50 backdrop-blur-sm shadow-command">
-                    <CardHeader className="pb-3 sm:pb-4">
-                      <CardTitle className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg bg-gradient-to-br ${section.gradient}`}>
-                          <section.icon className="w-5 h-5 text-white" />
+              <TabsContent key={key} value={key} className="space-y-6">
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                  {/* Enhanced Topic Navigation */}
+                  <Card 
+                    ref={topicNavRef} 
+                    className="xl:col-span-1 bg-card/80 border border-border/50 backdrop-blur-xl shadow-command h-fit sticky top-6"
+                  >
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex items-center gap-3">
+                        <div className={`p-3 rounded-xl bg-gradient-to-br ${section.gradient} shadow-lg`}>
+                          <section.icon className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-lg text-quantum-blue">{section.title}</span>
+                        <span className="text-xl text-quantum-blue">{section.title}</span>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -931,18 +1039,22 @@ Where:
                         <Button
                           key={topic.id}
                           variant={selectedTopic === topic.id ? "default" : "ghost"}
-                          className={`topic-button w-full justify-start h-auto p-3 text-left transition-all duration-300 ${
-                            selectedTopic === topic.id ? 'bg-gradient-quantum shadow-command' : 'hover:bg-muted/20'
+                          className={`topic-button w-full justify-start h-auto p-4 text-left transition-all duration-300 rounded-lg ${
+                            selectedTopic === topic.id 
+                              ? 'bg-gradient-quantum shadow-glow scale-[1.02]' 
+                              : 'hover:bg-muted/40 hover:scale-[1.01]'
                           }`}
                           onClick={() => handleTopicSelect(topic.id)}
                         >
-                          <div className="flex-1">
-                            <div className="text-white font-medium text-sm mb-2">{topic.title}</div>
+                          <div className="flex-1 space-y-2">
+                            <div className={`font-semibold text-sm ${selectedTopic === topic.id ? 'text-white' : 'text-foreground'}`}>
+                              {topic.title}
+                            </div>
                             <div className="flex flex-wrap items-center gap-2">
-                              <Badge className={`${getLevelColor(topic.level)} text-white text-xs px-2 py-1`}>
+                              <Badge className={`${getLevelColor(topic.level)} text-white border-0 shadow-sm text-xs`}>
                                 {getLevelIcon(topic.level)} {topic.level}
                               </Badge>
-                              <div className="text-xs text-muted-foreground flex items-center space-x-1">
+                              <div className={`text-xs flex items-center gap-1 ${selectedTopic === topic.id ? 'text-white/80' : 'text-muted-foreground'}`}>
                                 <BookOpen className="w-3 h-3" />
                                 <span>{topic.estimatedTime}</span>
                               </div>
@@ -952,71 +1064,89 @@ Where:
                       ))}
                     </CardContent>
                   </Card>
-                  {/* Content Display */}
+
+                  {/* Enhanced Content Display */}
                   <div className="xl:col-span-3">
                     {selectedTopic ? (() => {
                       const topic = section.topics.find(t => t.id === selectedTopic);
                       if (!topic) return null;
                       return (
-                        <Card ref={contentDisplayRef} className="bg-card/60 border-border/50 backdrop-blur-sm shadow-command">
-                          <CardHeader className="pb-3 sm:pb-4">
-                            <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                              <span className="text-xl text-quantum-blue">{topic.title}</span>
+                        <Card 
+                          ref={contentDisplayRef} 
+                          className="bg-card/80 border border-border/50 backdrop-blur-xl shadow-command"
+                        >
+                          <CardHeader className="pb-6 border-b border-border/50">
+                            <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                              <span className="text-2xl text-quantum-blue">{topic.title}</span>
                               <div className="flex flex-wrap items-center gap-2">
-                                <Badge className={`${getLevelColor(topic.level)} text-white px-3 py-1`}>
+                                <Badge className={`${getLevelColor(topic.level)} text-white border-0 shadow-sm px-3 py-1.5`}>
                                   {getLevelIcon(topic.level)} {topic.level}
                                 </Badge>
-                                <Badge variant="outline" className="text-xs border-quantum-blue/30 text-quantum-blue">
+                                <Badge variant="outline" className="border-quantum-blue/30 text-quantum-blue">
                                   <BookOpen className="w-3 h-3 mr-1" />
                                   {topic.estimatedTime}
                                 </Badge>
                               </div>
                             </CardTitle>
                           </CardHeader>
-                          <CardContent className="space-y-4 sm:space-y-6">
+                          
+                          <CardContent className="space-y-6 pt-6">
+                            {/* Main Content */}
                             <div className="content-section prose prose-invert max-w-none">
-                              <div className="text-foreground whitespace-pre-line leading-relaxed text-sm sm:text-base">
+                              <div className="text-foreground whitespace-pre-line leading-relaxed text-base">
                                 {topic.content}
                               </div>
                             </div>
-                            <div className={`content-section p-4 rounded-lg border ${section.bgColor} ${section.borderColor}`}>
-                              <h4 className={`font-bold mb-3 flex items-center ${section.color}`}>
-                                <Info className="w-5 h-5 mr-2" />
+
+                            {/* Key Facts Section */}
+                            <div className={`content-section p-6 rounded-xl border-2 ${section.bgColor} ${section.borderColor} hover:border-opacity-60 transition-all duration-300`}>
+                              <h4 className={`font-bold text-lg mb-4 flex items-center ${section.color}`}>
+                                <div className={`p-2 rounded-lg ${section.bgColor} mr-3`}>
+                                  <Info className="w-5 h-5" />
+                                </div>
                                 Key Facts
                               </h4>
-                              <div className="space-y-2">
+                              <div className="space-y-3">
                                 {topic.keyFacts.map((fact, factIndex) => (
-                                  <div key={factIndex} className="flex items-start space-x-3 text-sm">
-                                    <span className={`mt-0.5 flex-shrink-0 ${section.color}`}>•</span>
-                                    <span className="text-muted-foreground">{fact}</span>
+                                  <div key={factIndex} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
+                                    <span className={`mt-0.5 flex-shrink-0 font-bold ${section.color}`}>•</span>
+                                    <span className="text-sm text-foreground/90 leading-relaxed">{fact}</span>
                                   </div>
                                 ))}
                               </div>
                             </div>
+
+                            {/* Applications Section */}
                             {topic.applications && (
-                              <div className="content-section p-4 bg-quantum-blue/10 rounded-lg border border-quantum-blue/20">
-                                <h4 className="font-bold mb-3 flex items-center text-quantum-blue">
-                                  <PlayCircle className="w-5 h-5 mr-2" />
+                              <div className="content-section p-6 bg-gradient-to-br from-quantum-blue/10 to-transparent rounded-xl border-2 border-quantum-blue/20 hover:border-quantum-blue/40 transition-all duration-300">
+                                <h4 className="font-bold text-lg mb-4 flex items-center text-quantum-blue">
+                                  <div className="p-2 rounded-lg bg-quantum-blue/10 mr-3">
+                                    <PlayCircle className="w-5 h-5" />
+                                  </div>
                                   Real-World Applications
                                 </h4>
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                   {topic.applications.map((application, appIndex) => (
-                                    <div key={appIndex} className="flex items-start space-x-3 text-sm">
-                                      <span className="text-quantum-blue mt-0.5 flex-shrink-0">→</span>
-                                      <span className="text-muted-foreground">{application}</span>
+                                    <div key={appIndex} className="flex items-start gap-3 p-3 bg-background/50 rounded-lg">
+                                      <span className="text-quantum-blue mt-0.5 flex-shrink-0 font-bold">→</span>
+                                      <span className="text-sm text-foreground/90 leading-relaxed">{application}</span>
                                     </div>
                                   ))}
                                 </div>
                               </div>
                             )}
-                            <Separator className="my-4" />
-                            <div className="content-section space-y-3">
-                              <h4 className="font-bold text-quantum-blue">Learn More</h4>
+
+                            <Separator className="my-6" />
+
+                            {/* Action Section */}
+                            <div className="content-section space-y-4">
+                              <h4 className="font-bold text-lg text-quantum-blue flex items-center gap-2">
+                                <Sparkles className="w-5 h-5" />
+                                Continue Learning
+                              </h4>
                               <div className="flex flex-wrap gap-3">
                                 <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="border-plasma-orange text-plasma-orange hover:bg-plasma-orange hover:text-white transition-all duration-300"
+                                  className="bg-gradient-quantum hover:shadow-glow transition-all duration-300"
                                   onClick={() => {
                                     const simulationSection = document.getElementById('simulation');
                                     if (simulationSection) {
@@ -1033,20 +1163,22 @@ Where:
                         </Card>
                       );
                     })() : (
-                      <Card className="bg-card/60 border-border/50 backdrop-blur-sm shadow-command">
-                        <CardContent className="p-8 sm:p-12 text-center">
-                          <div className={`p-4 rounded-full bg-gradient-to-br ${section.gradient} w-fit mx-auto mb-6`}>
-                            <section.icon className="w-12 h-12 sm:w-16 sm:h-16 text-white animate-pulse" />
+                      <Card className="bg-card/80 border border-border/50 backdrop-blur-xl shadow-command">
+                        <CardContent className="p-12 text-center space-y-6">
+                          <div className={`p-6 rounded-2xl bg-gradient-to-br ${section.gradient} w-fit mx-auto shadow-glow`}>
+                            <section.icon className="w-20 h-20 text-white animate-pulse" />
                           </div>
-                          <h3 className="text-xl font-bold text-quantum-blue mb-2">{section.title}</h3>
-                          <p className="text-muted-foreground mb-6">
-                            Select a topic from the navigation to dive deep into {section.title.toLowerCase()}
-                          </p>
+                          <div className="space-y-3">
+                            <h3 className="text-2xl font-bold text-quantum-blue">{section.title}</h3>
+                            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                              Select a topic from the navigation to dive deep into {section.title.toLowerCase()}
+                            </p>
+                          </div>
                           <Button
                             onClick={() => setSelectedTopic(section.topics[0].id)}
-                            className="bg-gradient-quantum hover:shadow-command"
+                            className="bg-gradient-quantum hover:shadow-glow transition-all duration-300 px-8 py-6 text-base"
                           >
-                            <BookOpen className="w-4 h-4 mr-2" />
+                            <BookOpen className="w-5 h-5 mr-2" />
                             Start Learning
                           </Button>
                         </CardContent>

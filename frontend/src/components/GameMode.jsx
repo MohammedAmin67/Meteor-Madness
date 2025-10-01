@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,9 +22,15 @@ import {
   Activity,
   Settings,
   Rocket,
-  Info
+  Info,
+  Sun,
+  Satellite,
+  SatelliteDish,
+  Orbit,
+  Sparkles,
+  Dices,
 } from "lucide-react";
-import { getRandomScenario, getGameScenarios } from "@/services/api.js";
+import { getRandomScenario, getGameScenarios, testMitigation } from "@/services/api.js";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -47,6 +52,7 @@ const GameMode = () => {
   const [selectedTab, setSelectedTab] = useState("scenarios");
   const [isLoaded, setIsLoaded] = useState(false);
   const [animatedScores, setAnimatedScores] = useState(new Set());
+  const [testingStrategy, setTestingStrategy] = useState(false);
 
   // Animation refs
   const sectionRef = useRef(null);
@@ -426,18 +432,16 @@ const GameMode = () => {
   };
 
   const addRandomScenario = async () => {
-  setLoadingRandom(true);
-  try {
-    const randomScenarios = await getRandomScenario();
-    setScenarios(randomScenarios);
-  } catch (err) {
-    console.log("Error fetching random scenarios:", err);
-  } finally {
-    setLoadingRandom(false);
-  }
-};
-
- 
+    setLoadingRandom(true);
+    try {
+      const randomScenarios = await getRandomScenario();
+      setScenarios(randomScenarios);
+    } catch (err) {
+      console.log("Error fetching random scenarios:", err);
+    } finally {
+      setLoadingRandom(false);
+    }
+  };
 
   const startScenario = (scenario) => {
     setGameState({
@@ -454,7 +458,7 @@ const GameMode = () => {
   };
 
   const selectStrategy = (strategy) => {
-    if (!gameState.isPlaying) return;
+    if (!gameState.isPlaying || testingStrategy) return;
 
     setGameState(prev => ({ ...prev, selectedStrategy: strategy }));
     
@@ -468,57 +472,84 @@ const GameMode = () => {
       });
     }
     
-    // Simulate strategy execution
+    // Call backend API to test strategy
     setTimeout(() => {
       executeStrategy(strategy);
-    }, 2000);
+    }, 1000);
   };
 
-  const executeStrategy = (strategy) => {
+  const executeStrategy = async (strategy) => {
     if (!gameState.scenario) return;
 
-    const { asteroid } = gameState.scenario;
-    let success = false;
-    let scoreGained = 0;
-    let objectivesCompleted = [];
-
-    // Calculate success based on asteroid properties and strategy
-    switch (strategy) {
-      case 'kinetic_impactor':
-        success = asteroid.size < 500;
-        scoreGained = success ? 1000 : 200;
-        if (success) objectivesCompleted = ['Prevent impact'];
-        break;
-        
-      case 'gravity_tractor':
-        success = asteroid.size < 300 && gameState.timeRemaining > 60;
-        scoreGained = success ? 1500 : 300;
-        if (success) objectivesCompleted = ['Prevent impact', 'Minimize casualties'];
-        break;
-        
-      case 'nuclear_deflection':
-        success = asteroid.size < 1000;
-        scoreGained = success ? 2000 : 100;
-        if (success) objectivesCompleted = ['Prevent impact', 'Maximum efficiency'];
-        break;
+    setTestingStrategy(true);
+    
+    try {
+      const { asteroid } = gameState.scenario;
       
-      default:
-        success = false;
-        scoreGained = 0;
-        break;
+      // Call backend API with asteroid parameters
+      const result = await testMitigation(strategy, {
+        size: asteroid.size,
+        velocity: asteroid.velocity,
+        density: asteroid.density || 2.5,
+        composition: asteroid.composition || 'rock'
+      });
+
+      console.log('Backend result:', result);
+
+      // Calculate score based on backend result
+      let baseScore = 0;
+      if (result.successProbability >= 0.8) {
+        baseScore = 2000;
+      } else if (result.successProbability >= 0.6) {
+        baseScore = 1500;
+      } else if (result.successProbability >= 0.4) {
+        baseScore = 1000;
+      } else if (result.successProbability >= 0.2) {
+        baseScore = 500;
+      } else {
+        baseScore = 200;
+      }
+
+      // Time bonus
+      const timeBonus = Math.floor(gameState.timeRemaining / 10) * 50;
+      const totalScore = baseScore + timeBonus;
+
+      // Determine success based on probability
+      const success = result.success && result.successProbability >= 0.5;
+
+      // Determine completed objectives based on success
+      let objectivesCompleted = [];
+      if (success) {
+        // Complete objectives based on score
+        if (totalScore >= 2000) {
+          objectivesCompleted = gameState.scenario.objectives;
+        } else if (totalScore >= 1500) {
+          objectivesCompleted = gameState.scenario.objectives.slice(0, 2);
+        } else {
+          objectivesCompleted = [gameState.scenario.objectives[0]];
+        }
+      }
+
+      setGameState(prev => ({
+        ...prev,
+        score: prev.score + totalScore,
+        completedObjectives: [...prev.completedObjectives, ...objectivesCompleted],
+        missionStatus: success ? 'success' : 'failure',
+        isPlaying: false
+      }));
+
+    } catch (error) {
+      console.error('Strategy execution failed:', error);
+      // Fallback to failure if API call fails
+      setGameState(prev => ({
+        ...prev,
+        score: prev.score + 100,
+        missionStatus: 'failure',
+        isPlaying: false
+      }));
+    } finally {
+      setTestingStrategy(false);
     }
-
-    // Time bonus
-    const timeBonus = Math.floor(gameState.timeRemaining / 10);
-    scoreGained += timeBonus;
-
-    setGameState(prev => ({
-      ...prev,
-      score: prev.score + scoreGained,
-      completedObjectives: [...prev.completedObjectives, ...objectivesCompleted],
-      missionStatus: success ? 'success' : 'failure',
-      isPlaying: false
-    }));
   };
 
   const handleTimeUp = () => {
@@ -633,15 +664,45 @@ const GameMode = () => {
 
             {/* Scenarios Tab */}
             <TabsContent value="scenarios">
-              <Button
-                onClick={addRandomScenario}
-                disabled={loadingRandom}
-                className="mb-8 mx-auto flex items-center gap-2 bg-gradient-quantum"
-                style={{ minWidth: 260, justifyContent: "center" }}
-              >
-                {loadingRandom && <Spinner />}
-                {loadingRandom ? "Loading NASA Scenario..." : "Add Random NASA Scenario"}
-              </Button>
+              {/* Enhanced Random Scenario Button */}
+              <Card className="mb-8 bg-gradient-to-br from-card/80 to-quantum-blue/5 border border-quantum-blue/30 backdrop-blur-xl shadow-command hover:shadow-glow transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="p-4 rounded-2xl bg-gradient-quantum shadow-glow">
+                        <Dices className={`w-8 h-8 text-white ${loadingRandom ? 'animate-spin' : ''}`} />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-xl font-bold text-quantum-blue mb-1 flex items-center gap-2">
+                          NASA Random Scenario Generator
+                          <Sparkles className="w-5 h-5 text-stellar-cyan animate-pulse" />
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          Get real near-Earth asteroid data from NASA database for authentic missions
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={addRandomScenario}
+                      disabled={loadingRandom}
+                      size="lg"
+                      className="bg-gradient-quantum hover:shadow-glow transition-all duration-300 px-8 py-6 text-base font-semibold min-w-[200px] disabled:opacity-70"
+                    >
+                      {loadingRandom ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-background border-t-transparent mr-3" />
+                          <span>Loading NASA Data...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Dices className="w-5 h-5 mr-3" />
+                          <span>Generate Scenario</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
               <div ref={scenariosGridRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {scenarios.map((scenario) => {
@@ -891,50 +952,98 @@ const GameMode = () => {
                     </CardContent>
                   </Card>
 
-                  {/* Strategy Selection */}
+                  {/* Strategy Selection - IMPROVED LAYOUT */}
                   <Card className="mission-element lg:col-span-2 bg-card/60 border-border/50 backdrop-blur-sm shadow-command">
                     <CardHeader className="pb-3 sm:pb-4">
-                      <CardTitle className="flex items-center space-x-3">
-                        <div className="p-2 rounded-lg bg-gradient-quantum">
-                          <Shield className="w-5 h-5 text-white" />
+                      <CardTitle className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 rounded-lg bg-gradient-quantum">
+                            <Shield className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="text-lg text-quantum-blue">Defense Strategy Arsenal</span>
                         </div>
-                        <span className="text-lg text-quantum-blue">Defense Strategy</span>
+                        {gameState.isPlaying && (
+                          <Badge variant="outline" className="border-stellar-cyan/30 text-stellar-cyan animate-pulse">
+                            <Activity className="w-3 h-3 mr-1" />
+                            7 Strategies Available
+                          </Badge>
+                        )}
                       </CardTitle>
                     </CardHeader>
 
-                    <CardContent>
+                    <CardContent className="p-4 sm:p-6">
                       {gameState.isPlaying ? (
-                        <div ref={strategyPanelRef} className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                        <div ref={strategyPanelRef} className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3">
                           {[
                             {
                               id: 'kinetic_impactor',
                               name: 'Kinetic Impactor',
                               icon: Rocket,
-                              effectiveness: 'High for small objects',
-                              time: 'Quick deployment',
-                              cost: 'Moderate cost',
+                              effectiveness: 'High for small',
+                              time: 'Quick',
+                              cost: 'Moderate',
                               color: 'text-plasma-orange',
                               gradientColor: 'from-plasma-orange to-stellar-cyan'
                             },
                             {
                               id: 'gravity_tractor',
                               name: 'Gravity Tractor',
-                              icon: Target,
-                              effectiveness: 'Gentle but precise',
-                              time: 'Long duration',
-                              cost: 'High fuel cost',
+                              icon: Orbit,
+                              effectiveness: 'Gentle & precise',
+                              time: 'Long',
+                              cost: 'High fuel',
                               color: 'text-stellar-cyan',
                               gradientColor: 'from-stellar-cyan to-quantum-blue'
                             },
                             {
                               id: 'nuclear_deflection',
-                              name: 'Nuclear Deflection',
+                              name: 'Nuclear',
                               icon: Zap,
-                              effectiveness: 'Maximum power',
-                              time: 'Fast execution',
+                              effectiveness: 'Max power',
+                              time: 'Fast',
                               cost: 'Very expensive',
                               color: 'text-destructive',
                               gradientColor: 'from-destructive to-plasma-orange'
+                            },
+                            {
+                              id: 'laser_ablation',
+                              name: 'Laser Ablation',
+                              icon: Satellite,
+                              effectiveness: 'Precise',
+                              time: 'Long',
+                              cost: 'High energy',
+                              color: 'text-stellar-cyan',
+                              gradientColor: 'from-stellar-cyan to-plasma-orange'
+                            },
+                            {
+                              id: 'mass_driver',
+                              name: 'Mass Driver',
+                              icon: SatelliteDish,
+                              effectiveness: 'Self-sustaining',
+                              time: 'Very long',
+                              cost: 'Complex',
+                              color: 'text-muted-foreground',
+                              gradientColor: 'from-muted-foreground to-stellar-cyan'
+                            },
+                            {
+                              id: 'solar_concentrator',
+                              name: 'Solar Mirror',
+                              icon: Sun,
+                              effectiveness: 'Solar powered',
+                              time: 'Extended',
+                              cost: 'Large mirrors',
+                              color: 'text-yellow-400',
+                              gradientColor: 'from-yellow-400 to-stellar-cyan'
+                            },
+                            {
+                              id: 'ion_beam_shepherd',
+                              name: 'Ion Beam',
+                              icon: Zap,
+                              effectiveness: 'Gradual push',
+                              time: 'Moderate',
+                              cost: 'Advanced',
+                              color: 'text-quantum-blue',
+                              gradientColor: 'from-quantum-blue to-mission-green'
                             }
                           ].map((strategy) => {
                             const Icon = strategy.icon;
@@ -945,35 +1054,51 @@ const GameMode = () => {
                                 key={strategy.id}
                                 data-strategy={strategy.id}
                                 onClick={() => selectStrategy(strategy.id)}
-                                disabled={!!gameState.selectedStrategy || gameState.missionStatus !== 'pending'}
-                                className={`strategy-button h-auto p-4 sm:p-6 flex flex-col items-center space-y-4 transition-all duration-300 ${
+                                disabled={!!gameState.selectedStrategy || gameState.missionStatus !== 'pending' || testingStrategy}
+                                className={`strategy-button h-auto p-4 flex flex-col items-center justify-start space-y-3 transition-all duration-300 ${
                                   isSelected 
-                                    ? 'bg-gradient-quantum hover:shadow-command hover:scale-105' 
-                                    : 'bg-muted/20 hover:bg-muted/40 text-foreground hover:scale-105 border border-border/50  hover:shadow-command font-semibold hover:text-white'
+                                    ? 'bg-gradient-quantum shadow-glow scale-105 ring-2 ring-quantum-blue' 
+                                    : 'bg-muted/20 hover:bg-muted/40 text-foreground hover:scale-105 border border-border/50 hover:shadow-command font-semibold hover:text-white'
                                 }`}
                                 variant={isSelected ? "default" : "outline"}
                               >
-                                <div className={`p-3 rounded-lg ${isSelected ? 'bg-white/20' : `bg-gradient-to-br ${strategy.gradientColor}`}`}>
-                                  <Icon className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-white'}`} />
+                                <div className={`p-3 rounded-xl ${isSelected ? 'bg-white/20' : `bg-gradient-to-br ${strategy.gradientColor}`} shadow-lg`}>
+                                  <Icon className={`w-7 h-7 ${isSelected ? 'text-white' : 'text-white'}`} />
                                 </div>
                                 
-                                <div className="text-center space-y-2">
-                                  <div className="font-bold text-base">{strategy.name}</div>
+                                <div className="text-center space-y-2 w-full">
+                                  <div className="font-bold text-sm leading-tight">{strategy.name}</div>
                                   <div className="text-xs space-y-1 opacity-90">
                                     <div className="flex items-center justify-center space-x-1">
-                                      <Star className="w-3 h-3" />
-                                      <span>{strategy.effectiveness}</span>
+                                      <Star className="w-3 h-3 flex-shrink-0" />
+                                      <span className="truncate text-xs">{strategy.effectiveness}</span>
                                     </div>
                                     <div className="flex items-center justify-center space-x-1">
-                                      <Clock className="w-3 h-3" />
-                                      <span>{strategy.time}</span>
+                                      <Clock className="w-3 h-3 flex-shrink-0" />
+                                      <span className="truncate text-xs">{strategy.time}</span>
                                     </div>
                                     <div className="flex items-center justify-center space-x-1">
-                                      <Info className="w-3 h-3" />
-                                      <span>{strategy.cost}</span>
+                                      <Info className="w-3 h-3 flex-shrink-0" />
+                                      <span className="truncate text-xs">{strategy.cost}</span>
                                     </div>
                                   </div>
                                 </div>
+                                
+                                {isSelected && (
+                                  <Badge className="bg-white/20 text-white text-xs border-0 mt-2">
+                                    {testingStrategy ? (
+                                      <>
+                                        <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent mr-1" />
+                                        Testing...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                        Selected
+                                      </>
+                                    )}
+                                  </Badge>
+                                )}
                               </Button>
                             );
                           })}

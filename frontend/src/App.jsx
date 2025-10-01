@@ -183,13 +183,13 @@ const EducationPage = () => (
     <section className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            <span className="text-stellar-cyan">
+          <h1 className="text-stellar-cyan text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <span className="">
               Asteroid Science Hub
             </span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Comprehensive education on asteroid science, impact physics, and planetary defense strategies
+            Explore the fascinating science of asteroids, impact physics, and planetary defense through interactive learning modules
           </p>
         </div>
         <EducationalContent />
