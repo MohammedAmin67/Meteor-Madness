@@ -309,7 +309,7 @@ const Footer = () => {
             </div>
 
             {/* Project Stats */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div className="text-center p-3 bg-quantum-blue/10 rounded-lg border border-quantum-blue/20">
                 <div className="text-lg font-bold text-quantum-blue">4</div>
                 <div className="text-xs text-muted-foreground">Modules</div>
@@ -317,10 +317,6 @@ const Footer = () => {
               <div className="text-center p-3 bg-stellar-cyan/10 rounded-lg border border-stellar-cyan/20">
                 <div className="text-lg font-bold text-stellar-cyan">100%</div>
                 <div className="text-xs text-muted-foreground">Open Source</div>
-              </div>
-              <div className="text-center p-3 bg-mission-green/10 rounded-lg border border-mission-green/20">
-                <div className="text-lg font-bold text-mission-green">MIT</div>
-                <div className="text-xs text-muted-foreground">License</div>
               </div>
             </div>
           </div>
